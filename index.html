@@ -1,232 +1,1084 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Color Studio</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --surface:#181820;--surface2:#1f1f2a;--surface3:#26263a;
-  --rim:#2e2e42;--rim2:#3a3a52;
-  --cream:#e8e2d4;--gold:#b89a5a;--gold2:#d4b87a;--glow:rgba(184,154,90,0.15);
-  --text:#e8e4dc;--muted:#6b6878;--dim:#38364a;
-}
-body{
-  background:var(--surface);color:var(--text);
-  font-family:'JetBrains Mono',monospace;
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  padding:24px;
-}
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:0.6;
-}
-.wrap{width:520px;max-width:100%;position:relative;z-index:1;}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.studio-label{text-align:center;margin-bottom:28px;position:relative;}
-.studio-label::before,.studio-label::after{content:'';position:absolute;top:50%;width:36%;height:1px;background:linear-gradient(to var(--d,right),#3a3a52,transparent);}
-.studio-label::before{left:0;--d:right;}
-.studio-label::after{right:0;--d:left;}
-.studio-label span{font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:400;letter-spacing:5px;text-transform:uppercase;color:var(--gold);padding:0 16px;}
+  :root{
+    --surface:#181820;
+    --surface2:#1f1f2a;
+    --surface3:#26263a;
+    --rim:#2e2e42;
+    --rim2:#3a3a52;
+    --cream:#e8e2d4;
+    --gold:#b89a5a;
+    --gold2:#d4b87a;
+    --glow:rgba(184,154,90,0.15);
+    --text:#e8e4dc;
+    --muted:#6b6878;
+    --dim:#38364a;
+  }
 
-.card{background:var(--surface2);border:1px solid var(--rim);position:relative;overflow:hidden;}
-.color-strip{position:absolute;top:0;left:0;bottom:0;width:4px;transition:background 0.3s;z-index:2;}
+  * { box-sizing: border-box; }
 
-/* ORB */
-.orb-section{padding:36px 36px 28px 44px;display:flex;align-items:center;gap:28px;border-bottom:1px solid var(--rim);}
-.orb-wrap{position:relative;flex-shrink:0;width:110px;height:110px;}
-.orb{
-  width:110px;height:110px;border-radius:50%;
-  transition:background 0.25s,box-shadow 0.25s;
-  position:relative;cursor:pointer;
-}
-.orb::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:inset -6px -6px 18px rgba(0,0,0,0.3),inset 3px 3px 8px rgba(255,255,255,0.1);}
-.orb-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid var(--rim2);}
-.orb-ring2{position:absolute;inset:-15px;border-radius:50%;border:1px dashed var(--rim);animation:spin 20s linear infinite;opacity:0.4;}
-@keyframes spin{to{transform:rotate(360deg)}}
-input[type=color]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border-radius:50%;}
+  body{
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
 
-.orb-meta{flex:1;}
-.orb-hex{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;letter-spacing:2px;color:var(--text);line-height:1;margin-bottom:6px;}
-.orb-hex em{color:var(--gold);font-style:normal;font-weight:600;}
-.orb-sub{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
-.lum-pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border:1px solid var(--rim2);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.lum-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);transition:background 0.3s;}
+  body::before{
+    content:'';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
 
-/* INPUT */
-.input-section{padding:20px 36px 20px 44px;border-bottom:1px solid var(--rim);display:flex;align-items:center;}
-.input-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding-right:16px;border-right:1px solid var(--rim);margin-right:0;flex-shrink:0;}
-.hash{font-size:18px;color:var(--gold);margin:0 6px 0 16px;font-weight:300;}
-input[type=text]#hexField{background:transparent;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--text);letter-spacing:3px;text-transform:uppercase;flex:1;caret-color:var(--gold);}
+  .wrap{
+    width: 520px;
+    max-width: 100%;
+    position: relative;
+    z-index: 1;
+  }
 
-/* VALUES */
-.values-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--rim);}
-.val-cell{padding:18px 20px;border-right:1px solid var(--rim);position:relative;cursor:pointer;transition:background 0.2s;}
-.val-cell:last-child{border-right:none;}
-.val-cell:hover{background:var(--surface3);}
-.val-cell:hover .copy-ico{opacity:1;}
-.val-type{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:7px;}
-.val-text{font-size:11px;color:var(--cream);letter-spacing:0.5px;}
-.copy-ico{position:absolute;top:10px;right:10px;color:var(--gold);opacity:0;transition:opacity 0.2s;}
+  .studio-label{
+    text-align:center;
+    margin-bottom: 28px;
+    position: relative;
+  }
 
-/* CHANNELS */
-.channels{padding:24px 36px 24px 44px;border-bottom:1px solid var(--rim);}
-.ch-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:18px;}
-.ch{display:flex;align-items:center;gap:14px;margin-bottom:13px;}
-.ch:last-child{margin-bottom:0}
-.ch-ltr{width:10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;font-weight:500;text-align:center;}
-.ch-ltr.R{color:#e07070}.ch-ltr.G{color:#70c070}.ch-ltr.B{color:#70a0e0}
-.ch-track{flex:1;height:2px;background:var(--rim);position:relative;overflow:visible;}
-.ch-fill{height:100%;transition:width 0.25s ease;position:relative;}
-.ch-fill::after{content:'';position:absolute;right:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:inherit;opacity:0.8;}
-.ch-fill.R{background:#e07070}.ch-fill.G{background:#70c070}.ch-fill.B{background:#70a0e0}
-.ch-num{width:24px;text-align:right;font-size:10px;color:var(--muted);flex-shrink:0;}
+  .studio-label::before,
+  .studio-label::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    width:36%;
+    height:1px;
+    background: linear-gradient(to left, #3a3a52, transparent);
+  }
 
-/* FOOTER */
-.footer{padding:16px 36px 16px 44px;display:flex;align-items:center;justify-content:space-between;}
-.footer-brand{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:300;letter-spacing:4px;text-transform:uppercase;color:var(--dim);}
-.footer-actions{display:flex;gap:8px;}
-.action-btn{background:transparent;border:1px solid var(--rim2);color:var(--muted);padding:7px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.2s;}
-.action-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--glow);}
-.action-btn svg{width:11px;height:11px;flex-shrink:0;}
+  .studio-label::before{
+    right: 0;
+  }
 
-/* TOAST */
-.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface3);border:1px solid var(--gold);padding:12px 22px;display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:0;transition:all 0.25s cubic-bezier(.16,1,.3,1);pointer-events:none;white-space:nowrap;z-index:100;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .studio-label::after{
+    left: 0;
+    transform: scaleX(-1);
+  }
+
+  .studio-label span{
+    font-family:'Cormorant Garamond', serif;
+    font-size:11px;
+    font-weight:400;
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:var(--gold);
+    padding:0 16px;
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+
+  .card{
+    background: var(--surface2);
+    border: 1px solid var(--rim);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .color-strip{
+    position:absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    width:4px;
+    transition: background 0.25s ease;
+    z-index:2;
+  }
+
+  .orb-section{
+    padding:36px 44px 28px 36px;
+    display:flex;
+    align-items:center;
+    gap:28px;
+    border-bottom:1px solid var(--rim);
+  }
+
+  .orb-wrap{
+    position:relative;
+    flex-shrink:0;
+    width:110px;
+    height:110px;
+  }
+
+  .orb{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    transition: background 0.25s, box-shadow 0.25s, transform 0.2s ease;
+    position:relative;
+    cursor:pointer;
+    overflow:hidden;
+  }
+
+  .orb:hover{
+    transform: scale(1.02);
+  }
+
+  .orb::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    box-shadow:
+      inset -6px -6px 18px rgba(0,0,0,0.30),
+      inset 3px 3px 8px rgba(255,255,255,0.10);
+  }
+
+  .orb-ring{
+    position:absolute;
+    inset:-7px;
+    border-radius:50%;
+    border:1px solid var(--rim2);
+  }
+
+  .orb-ring2{
+    position:absolute;
+    inset:-15px;
+    border-radius:50%;
+    border:1px dashed var(--rim);
+    animation: spin 20s linear infinite;
+    opacity:0.4;
+  }
+
+  @keyframes spin{
+    to { transform: rotate(360deg); }
+  }
+
+  input[type=color]{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+  }
+
+  .orb-meta{ flex:1; }
+
+  .orb-hex{
+    font-family:'Cormorant Garamond', serif;
+    font-size:40px;
+    font-weight:300;
+    letter-spacing:2px;
+    color:var(--text);
+    line-height:1;
+    margin-bottom:6px;
+  }
+
+  .orb-hex em{
+    color:var(--gold);
+    font-style:normal;
+    font-weight:600;
+  }
+
+  .orb-sub{
+    font-size:10px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:16px;
+  }
+
+  .lum-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:5px 12px;
+    border:1px solid var(--rim2);
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .lum-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--gold);
+    transition:background 0.25s ease;
+  }
+
+  .input-section{
+    padding:20px 44px 20px 36px;
+    border-bottom:1px solid var(--rim);
+    display:flex;
+    align-items:center;
+  }
+
+  .input-label{
+    font-size:9px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--dim);
+    padding-left:16px;
+    border-left:1px solid var(--rim);
+    flex-shrink:0;
+  }
+
+  .hash{
+    font-size:18px;
+    color:var(--gold);
+    margin:0 16px 0 6px;
+    font-weight:300;
+  }
+
+  input[type=text]#hexField{
+    background:transparent;
+    border:none;
+    outline:none;
+    font-family:'JetBrains Mono', monospace;
+    font-size:18px;
+    color:var(--text);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    flex:1;
+    caret-color:var(--gold);
+    direction:ltr;
+    text-align:left;
+  }
+
+  .values-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border-bottom:1px solid var(--rim);
+  }
+
+  .val-cell{
+    padding:18px 20px;
+    border-left:1px solid var(--rim);
+    position:relative;
+    cursor:pointer;
+    transition: background 0.2s;
+  }
+
+  .val-cell:first-child{
+    border-left:none;
+  }
+
+  .val-cell:hover{
+    background: var(--surface3);
+  }
+
+  .val-cell:hover .copy-ico{
+    opacity:1;
+  }
+
+  .val-type{
+    font-size:8px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin-bottom:7px;
+  }
+
+  .val-text{
+    font-size:11px;
+    color:var(--cream);
+    letter-spacing:0.5px;
+    direction:ltr;
+    text-align:left;
+    word-break: break-word;
+  }
+
+  .copy-ico{
+    position:absolute;
+    top:10px;
+    left:10px;
+    color:var(--gold);
+    opacity:0;
+    transition:opacity 0.2s;
+    pointer-events:none;
+  }
+
+  .section{
+    padding:24px 36px 24px 44px;
+    border-bottom:1px solid var(--rim);
+  }
+
+  .section:last-of-type{
+    border-bottom:none;
+  }
+
+  .ch-title{
+    font-size:9px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin-bottom:18px;
+  }
+
+  .ch{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:13px;
+  }
+
+  .ch:last-child{
+    margin-bottom:0;
+  }
+
+  .ch-ltr{
+    width:10px;
+    font-size:9px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    flex-shrink:0;
+    font-weight:500;
+    text-align:center;
+  }
+
+  .ch-ltr.R{ color:#e07070; }
+  .ch-ltr.G{ color:#70c070; }
+  .ch-ltr.B{ color:#70a0e0; }
+
+  .ch-track{
+    flex:1;
+    height:2px;
+    background: var(--rim);
+    position:relative;
+    overflow:visible;
+  }
+
+  .ch-fill{
+    height:100%;
+    transition: width 0.25s ease;
+    position:relative;
+  }
+
+  .ch-fill::after{
+    content:'';
+    position:absolute;
+    right:-4px;
+    top:-4px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:inherit;
+    opacity:0.8;
+  }
+
+  .ch-fill.R{ background:#e07070; }
+  .ch-fill.G{ background:#70c070; }
+  .ch-fill.B{ background:#70a0e0; }
+
+  .ch-num{
+    width:24px;
+    text-align:left;
+    font-size:10px;
+    color:var(--muted);
+    flex-shrink:0;
+    direction:ltr;
+  }
+
+  .mini-grid{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:10px;
+  }
+
+  .swatch{
+    aspect-ratio:1;
+    border:1px solid var(--rim2);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    border-radius:10px;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+  }
+
+  .swatch:hover{
+    transform: translateY(-2px);
+    border-color: var(--gold);
+  }
+
+  .swatch::after{
+    content: attr(data-copy);
+    position:absolute;
+    inset:auto 0 0 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.45), transparent);
+    color:#fff;
+    font-size:8px;
+    text-align:center;
+    padding:6px 2px 4px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    opacity:0;
+    transition: opacity 0.18s ease;
+  }
+
+  .swatch:hover::after{
+    opacity:1;
+  }
+
+  .list{
+    display:grid;
+    grid-template-columns:repeat(10, 1fr);
+    gap:8px;
+  }
+
+  .list-item{
+    aspect-ratio:1;
+    border:1px solid var(--rim2);
+    border-radius:8px;
+    cursor:pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+  }
+
+  .list-item:hover{
+    transform: translateY(-2px);
+    border-color: var(--gold);
+  }
+
+  .footer{
+    padding:16px 36px 16px 44px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .footer-brand{
+    font-family:'Cormorant Garamond', serif;
+    font-size:12px;
+    font-weight:300;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+
+  .footer-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .action-btn{
+    background:transparent;
+    border:1px solid var(--rim2);
+    color:var(--muted);
+    padding:7px 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    transition:all 0.2s;
+  }
+
+  .action-btn:hover{
+    border-color:var(--gold);
+    color:var(--gold);
+    background:var(--glow);
+  }
+
+  .action-btn svg{
+    width:11px;
+    height:11px;
+    flex-shrink:0;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:32px;
+    left:50%;
+    transform:translateX(-50%) translateY(16px);
+    background:var(--surface3);
+    border:1px solid var(--gold);
+    padding:12px 22px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--gold);
+    opacity:0;
+    transition:all 0.25s cubic-bezier(.16,1,.3,1);
+    pointer-events:none;
+    white-space:nowrap;
+    z-index:100;
+  }
+
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  .muted-note{
+    font-size:9px;
+    letter-spacing:2px;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-top:10px;
+  }
+
+  @media (max-width: 560px){
+    .orb-section{
+      padding:28px 22px;
+      flex-direction:column;
+      align-items:flex-start;
+    }
+
+    .input-section,
+    .section,
+    .footer{
+      padding-left:22px;
+      padding-right:22px;
+    }
+
+    .values-row{
+      grid-template-columns:1fr;
+    }
+
+    .val-cell{
+      border-left:none;
+      border-bottom:1px solid var(--rim);
+    }
+
+    .val-cell:last-child{
+      border-bottom:none;
+    }
+
+    .mini-grid{
+      grid-template-columns:repeat(3, 1fr);
+    }
+
+    .list{
+      grid-template-columns:repeat(5, 1fr);
+    }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="studio-label"><span>Color Studio</span></div>
-  <div class="card">
-    <div class="color-strip" id="strip"></div>
-    <div class="orb-section">
-      <div class="orb-wrap">
-        <div class="orb-ring2"></div>
-        <div class="orb-ring"></div>
-        <div class="orb" id="orb">
-          <input type="color" id="picker" value="#3b82f6">
+  <div class="wrap">
+    <div class="studio-label"><span>Color Studio</span></div>
+
+    <div class="card">
+      <div class="color-strip" id="strip"></div>
+
+      <div class="orb-section">
+        <div class="orb-wrap">
+          <div class="orb-ring2"></div>
+          <div class="orb-ring"></div>
+          <div class="orb" id="orb">
+            <input type="color" id="picker" value="#3b82f6" aria-label="اختر لون">
+          </div>
+        </div>
+
+        <div class="orb-meta">
+          <div class="orb-hex"><em>#</em><span id="hexDisplay">3B82F6</span></div>
+          <div class="orb-sub">اضغط الدائرة لاختيار اللون</div>
+          <div class="lum-pill">
+            <div class="lum-dot" id="lumDot"></div>
+            <span id="lumLabel">Medium</span>
+          </div>
+          <div class="muted-note" id="contrastNote">Contrast: 0.00</div>
         </div>
       </div>
-      <div class="orb-meta">
-        <div class="orb-hex"><em>#</em><span id="hexDisplay">3B82F6</span></div>
-        <div class="orb-sub">اضغط الدائرة لاختيار اللون</div>
-        <div class="lum-pill"><div class="lum-dot" id="lumDot"></div><span id="lumLabel">Medium</span></div>
+
+      <div class="input-section">
+        <div class="input-label">Hex</div>
+        <span class="hash">#</span>
+        <input type="text" id="hexField" maxlength="6" value="3B82F6" spellcheck="false" autocomplete="off" inputmode="text">
       </div>
-    </div>
-    <div class="input-section">
-      <div class="input-label">Hex</div>
-      <span class="hash">#</span>
-      <input type="text" id="hexField" maxlength="6" value="3B82F6" spellcheck="false" autocomplete="off">
-    </div>
-    <div class="values-row">
-      <div class="val-cell" onclick="copyVal('hex')">
-        <div class="val-type">HEX</div>
-        <div class="val-text" id="vHex">#3B82F6</div>
-        <div class="copy-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+
+      <div class="values-row">
+        <div class="val-cell" data-copy="hex" onclick="copyVal('hex')">
+          <div class="val-type">HEX</div>
+          <div class="val-text" id="vHex">#3B82F6</div>
+          <div class="copy-ico">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="val-cell" data-copy="rgb" onclick="copyVal('rgb')">
+          <div class="val-type">RGB</div>
+          <div class="val-text" id="vRgb">rgb(59, 130, 246)</div>
+          <div class="copy-ico">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="val-cell" data-copy="hsl" onclick="copyVal('hsl')">
+          <div class="val-type">HSL</div>
+          <div class="val-text" id="vHsl">hsl(217, 91%, 60%)</div>
+          <div class="copy-ico">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </div>
+        </div>
       </div>
-      <div class="val-cell" onclick="copyVal('rgb')">
-        <div class="val-type">RGB</div>
-        <div class="val-text" id="vRgb">rgb(59, 130, 246)</div>
-        <div class="copy-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+
+      <div class="section">
+        <div class="ch-title">— RGB Channels</div>
+        <div class="ch"><span class="ch-ltr R">R</span><div class="ch-track"><div class="ch-fill R" id="fR" style="width:23%"></div></div><span class="ch-num" id="nR">59</span></div>
+        <div class="ch"><span class="ch-ltr G">G</span><div class="ch-track"><div class="ch-fill G" id="fG" style="width:51%"></div></div><span class="ch-num" id="nG">130</span></div>
+        <div class="ch"><span class="ch-ltr B">B</span><div class="ch-track"><div class="ch-fill B" id="fB" style="width:96%"></div></div><span class="ch-num" id="nB">246</span></div>
       </div>
-      <div class="val-cell" onclick="copyVal('hsl')">
-        <div class="val-type">HSL</div>
-        <div class="val-text" id="vHsl">hsl(217, 91%, 60%)</div>
-        <div class="copy-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+
+      <div class="section">
+        <div class="ch-title">— Palette</div>
+        <div id="palette" class="mini-grid"></div>
       </div>
-    </div>
-    <div class="channels">
-      <div class="ch-title">— RGB Channels</div>
-      <div class="ch"><span class="ch-ltr R">R</span><div class="ch-track"><div class="ch-fill R" id="fR" style="width:23%"></div></div><span class="ch-num" id="nR">59</span></div>
-      <div class="ch"><span class="ch-ltr G">G</span><div class="ch-track"><div class="ch-fill G" id="fG" style="width:51%"></div></div><span class="ch-num" id="nG">130</span></div>
-      <div class="ch"><span class="ch-ltr B">B</span><div class="ch-track"><div class="ch-fill B" id="fB" style="width:96%"></div></div><span class="ch-num" id="nB">246</span></div>
-    </div>
-    <div class="footer">
-      <div class="footer-brand">Color Studio</div>
-      <div class="footer-actions">
-        <button class="action-btn" onclick="copyVal('hex')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy HEX
-        </button>
-        <button class="action-btn" onclick="copyVal('all')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          Copy All
-        </button>
+
+      <div class="section">
+        <div class="ch-title">— History</div>
+        <div id="history" class="list"></div>
+      </div>
+
+      <div class="section">
+        <div class="ch-title">— Favorites</div>
+        <div id="favorites" class="list"></div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-brand">Color Studio</div>
+        <div class="footer-actions">
+          <button class="action-btn" onclick="copyVal('hex')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy HEX
+          </button>
+          <button class="action-btn" onclick="copyVal('all')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Copy All
+          </button>
+          <button class="action-btn" onclick="copyCSSVars()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 17l-5-5 5-5"></path>
+              <path d="M16 7l5 5-5 5"></path>
+            </svg>
+            Export CSS
+          </button>
+          <button class="action-btn" onclick="saveFavorite()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.53L12 21.35z"></path>
+            </svg>
+            Favorite
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="toast" id="toast">
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toastTxt">تم النسخ</span>
-</div>
+
+  <div class="toast" id="toast">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastTxt">تم النسخ</span>
+  </div>
+
 <script>
-const picker=document.getElementById('picker');
-const hexField=document.getElementById('hexField');
-const orb=document.getElementById('orb');
-const strip=document.getElementById('strip');
-const toast=document.getElementById('toast');
-let current=localStorage.getItem('color')||'#3b82f6';
-update(current);picker.value=current;hexField.value=current.slice(1).toUpperCase();
+  const picker = document.getElementById('picker');
+  const hexField = document.getElementById('hexField');
+  const orb = document.getElementById('orb');
+  const strip = document.getElementById('strip');
+  const toast = document.getElementById('toast');
+  const paletteEl = document.getElementById('palette');
+  const historyEl = document.getElementById('history');
+  const favoritesEl = document.getElementById('favorites');
 
-picker.addEventListener('input',()=>{current=picker.value;hexField.value=current.slice(1).toUpperCase();update(current);save();});
-hexField.addEventListener('input',()=>{
-  const v=hexField.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6);
-  hexField.value=v;
-  if(v.length===6){current='#'+v;picker.value=current;update(current);save();}
-});
+  let current = normalizeHex(localStorage.getItem('color') || '#3b82f6');
+  let toastTimer = null;
 
-function save(){localStorage.setItem('color',current);}
-function update(hex){
-  const{r,g,b}=toRgb(hex);
-  const{h,s,l}=toHsl(r,g,b);
-  const lum=(0.299*r+0.587*g+0.114*b)/255;
-  orb.style.background=hex;
-  orb.style.boxShadow=`0 0 40px ${hex}44,0 8px 32px rgba(0,0,0,0.5)`;
-  strip.style.background=hex;
-  document.getElementById('hexDisplay').textContent=hex.slice(1).toUpperCase();
-  const ll=document.getElementById('lumLabel'),ld=document.getElementById('lumDot');
-  if(lum>0.7){ll.textContent='Light';ld.style.background='#e8e4dc';}
-  else if(lum>0.35){ll.textContent='Medium';ld.style.background=hex;}
-  else{ll.textContent='Dark';ld.style.background='#38364a';}
-  document.getElementById('vHex').textContent=hex.toUpperCase();
-  document.getElementById('vRgb').textContent=`rgb(${r}, ${g}, ${b})`;
-  document.getElementById('vHsl').textContent=`hsl(${h}, ${s}%, ${l}%)`;
-  document.getElementById('fR').style.width=(r/255*100)+'%';
-  document.getElementById('fG').style.width=(g/255*100)+'%';
-  document.getElementById('fB').style.width=(b/255*100)+'%';
-  document.getElementById('nR').textContent=r;
-  document.getElementById('nG').textContent=g;
-  document.getElementById('nB').textContent=b;
-}
-function toRgb(hex){hex=hex.replace('#','');return{r:parseInt(hex.substr(0,2),16),g:parseInt(hex.substr(2,2),16),b:parseInt(hex.substr(4,2),16)};}
-function toHsl(r,g,b){
-  r/=255;g/=255;b/=255;
-  const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
-  let h,s,l=(mx+mn)/2;
-  if(mx===mn){h=s=0;}else{
-    const d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);
-    switch(mx){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}
+  init();
+
+  function init(){
+    picker.value = current;
+    hexField.value = current.slice(1).toUpperCase();
+    update(current, false);
+    renderHistory();
+    renderFavorites();
+
+    picker.addEventListener('input', () => {
+      current = normalizeHex(picker.value);
+      hexField.value = current.slice(1).toUpperCase();
+      update(current);
+      saveColor();
+    });
+
+    hexField.addEventListener('input', () => {
+      const v = hexField.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+      hexField.value = v.toUpperCase();
+
+      if (v.length === 6) {
+        current = normalizeHex('#' + v);
+        picker.value = current;
+        update(current);
+        saveColor();
+      }
+    });
   }
-  return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
-}
-const vals={
-  hex:()=>document.getElementById('vHex').textContent,
-  rgb:()=>document.getElementById('vRgb').textContent,
-  hsl:()=>document.getElementById('vHsl').textContent,
-  all:()=>[document.getElementById('vHex').textContent,document.getElementById('vRgb').textContent,document.getElementById('vHsl').textContent].join('\n')
-};
-function copyVal(type){
-  navigator.clipboard.writeText(vals[type]()).then(()=>{
-    const lb={hex:'تم نسخ HEX',rgb:'تم نسخ RGB',hsl:'تم نسخ HSL',all:'تم نسخ الكل'};
-    document.getElementById('toastTxt').textContent=lb[type]||'تم النسخ';
-    toast.classList.add('show');clearTimeout(window._t);
-    window._t=setTimeout(()=>toast.classList.remove('show'),2000);
-  });
-}</script>
+
+  function normalizeHex(hex){
+    if (!hex) return '#3b82f6';
+    hex = String(hex).trim();
+    if (!hex.startsWith('#')) hex = '#' + hex;
+    const raw = hex.slice(1).replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+    return '#' + raw.padEnd(6, '0').toLowerCase();
+  }
+
+  function saveColor(){
+    localStorage.setItem('color', current);
+  }
+
+  function update(hex, shouldStoreHistory = true){
+    const rgb = toRgb(hex);
+    const hsl = toHsl(rgb.r, rgb.g, rgb.b);
+    const lum = relativeLuminance(rgb.r, rgb.g, rgb.b);
+    const textColor = getBestTextColor(hex);
+    const contrast = contrastRatio(rgb, hexToRgb(textColor));
+
+    orb.style.background = hex;
+    orb.style.boxShadow = `0 0 40px ${hex}44, 0 8px 32px rgba(0,0,0,0.5)`;
+    strip.style.background = hex;
+
+    document.getElementById('hexDisplay').textContent = hex.slice(1).toUpperCase();
+    document.getElementById('lumLabel').textContent = lum > 0.7 ? 'Light' : (lum > 0.35 ? 'Medium' : 'Dark');
+    document.getElementById('lumDot').style.background = lum > 0.7 ? '#e8e4dc' : (lum > 0.35 ? hex : '#38364a');
+
+    document.getElementById('vHex').textContent = hex.toUpperCase();
+    document.getElementById('vRgb').textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+    document.getElementById('vHsl').textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+
+    document.getElementById('fR').style.width = (rgb.r / 255 * 100) + '%';
+    document.getElementById('fG').style.width = (rgb.g / 255 * 100) + '%';
+    document.getElementById('fB').style.width = (rgb.b / 255 * 100) + '%';
+
+    document.getElementById('nR').textContent = rgb.r;
+    document.getElementById('nG').textContent = rgb.g;
+    document.getElementById('nB').textContent = rgb.b;
+
+    document.getElementById('contrastNote').textContent = `Contrast: ${contrast.toFixed(2)}:1`;
+
+    document.body.style.setProperty('--preview-text', textColor);
+
+    generatePalette(hex);
+
+    if (shouldStoreHistory) saveHistory(hex);
+  }
+
+  function saveHistory(hex){
+    let history = JSON.parse(localStorage.getItem('history') || '[]');
+    history = history.filter(c => c !== hex);
+    history.unshift(hex);
+    history = history.slice(0, 12);
+    localStorage.setItem('history', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory(){
+    const history = JSON.parse(localStorage.getItem('history') || '[]');
+    historyEl.innerHTML = '';
+
+    if (!history.length){
+      historyEl.innerHTML = `<div class="muted-note" style="grid-column:1/-1;margin-top:0;">لا يوجد سجل بعد</div>`;
+      return;
+    }
+
+    history.forEach(c => {
+      const d = document.createElement('div');
+      d.className = 'list-item';
+      d.style.background = c;
+      d.title = c.toUpperCase();
+      d.onclick = () => {
+        current = c;
+        picker.value = c;
+        hexField.value = c.slice(1).toUpperCase();
+        update(c);
+        saveColor();
+      };
+      historyEl.appendChild(d);
+    });
+  }
+
+  function saveFavorite(){
+    const fav = JSON.parse(localStorage.getItem('fav') || '[]');
+    if (!fav.includes(current)) {
+      fav.unshift(current);
+      localStorage.setItem('fav', JSON.stringify(fav.slice(0, 12)));
+      renderFavorites();
+      showToast('تم حفظ اللون');
+    } else {
+      showToast('اللون محفوظ مسبقًا');
+    }
+  }
+
+  function renderFavorites(){
+    const fav = JSON.parse(localStorage.getItem('fav') || '[]');
+    favoritesEl.innerHTML = '';
+
+    if (!fav.length){
+      favoritesEl.innerHTML = `<div class="muted-note" style="grid-column:1/-1;margin-top:0;">لا توجد مفضلات بعد</div>`;
+      return;
+    }
+
+    fav.forEach(c => {
+      const d = document.createElement('div');
+      d.className = 'list-item';
+      d.style.background = c;
+      d.title = c.toUpperCase();
+      d.onclick = () => {
+        current = c;
+        picker.value = c;
+        hexField.value = c.slice(1).toUpperCase();
+        update(c);
+        saveColor();
+      };
+      favoritesEl.appendChild(d);
+    });
+  }
+
+  function generatePalette(hex){
+    const { h, s, l } = toHsl(...Object.values(toRgb(hex)));
+
+    const palette = [
+      hex,
+      hslToHex((h + 30) % 360, s, l),
+      hslToHex((h + 180) % 360, s, l),
+      hslToHex((h + 210) % 360, s, l),
+      hslToHex(h, Math.max(20, s - 30), Math.min(92, l + 18)),
+      hslToHex(h, Math.min(100, s + 10), Math.max(8, l - 18))
+    ];
+
+    paletteEl.innerHTML = '';
+
+    palette.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'swatch';
+      div.style.background = c;
+      div.setAttribute('data-copy', c.toUpperCase());
+      div.title = c.toUpperCase();
+      div.onclick = () => {
+        current = c;
+        picker.value = c;
+        hexField.value = c.slice(1).toUpperCase();
+        update(c);
+        saveColor();
+        copyText(c.toUpperCase(), 'تم نسخ اللون');
+      };
+      paletteEl.appendChild(div);
+    });
+  }
+
+  function copyCSSVars(){
+    const rgb = toRgb(current);
+    const hsl = toHsl(rgb.r, rgb.g, rgb.b);
+    const css = [
+      ':root {',
+      `  --color-main: ${current};`,
+      `  --color-main-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b};`,
+      `  --color-main-hsl: ${hsl.h} ${hsl.s}% ${hsl.l}%;`,
+      '}'
+    ].join('\n');
+
+    copyText(css, 'تم نسخ CSS');
+  }
+
+  function copyVal(type){
+    const values = {
+      hex: document.getElementById('vHex').textContent,
+      rgb: document.getElementById('vRgb').textContent,
+      hsl: document.getElementById('vHsl').textContent,
+      all: [
+        document.getElementById('vHex').textContent,
+        document.getElementById('vRgb').textContent,
+        document.getElementById('vHsl').textContent
+      ].join('\n')
+    };
+
+    const labels = {
+      hex: 'تم نسخ HEX',
+      rgb: 'تم نسخ RGB',
+      hsl: 'تم نسخ HSL',
+      all: 'تم نسخ الكل'
+    };
+
+    copyText(values[type], labels[type] || 'تم النسخ');
+  }
+
+  async function copyText(text, message){
+    try{
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      showToast(message);
+    } catch (err) {
+      showToast('فشل النسخ');
+    }
+  }
+
+  function showToast(msg){
+    document.getElementById('toastTxt').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function toRgb(hex){
+    hex = normalizeHex(hex).slice(1);
+    return {
+      r: parseInt(hex.slice(0,2), 16),
+      g: parseInt(hex.slice(2,4), 16),
+      b: parseInt(hex.slice(4,6), 16)
+    };
+  }
+
+  function hexToRgb(hex){
+    hex = normalizeHex(hex).slice(1);
+    return {
+      r: parseInt(hex.slice(0,2), 16),
+      g: parseInt(hex.slice(2,4), 16),
+      b: parseInt(hex.slice(4,6), 16)
+    };
+  }
+
+  function rgbToHex(r, g, b){
+    return '#' + [r, g, b]
+      .map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  function toHsl(r, g, b){
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const d = max - min;
+
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+
+    if (d !== 0){
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+      switch (max){
+        case r:
+          h = ((g - b) / d + (g < b ? 6 : 0));
+          break;
+        case g:
+          h = ((b - r) / d + 2);
+          break;
+        case b:
+          h = ((r - g) / d + 4);
+          break;
+      }
+
+      h /= 6;
+    }
+
+    return {
+      h: Math.round(h * 360),
+      s: Math.round(s * 100),
+      l: Math.round(l * 100)
+    };
+  }
+
+  function hslToHex(h, s, l){
+    h = ((h % 360) + 360) % 360;
+    s /= 100;
+    l /= 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
+
+    let r = 0, g = 0, b = 0;
+
+    if (h < 60) { r = c; g = x; b = 0; }
+    else if (h < 120) { r = x; g = c; b = 0; }
+    else if (h < 180) { r = 0; g = c; b = x; }
+    else if (h < 240) { r = 0; g = x; b = c; }
+    else if (h < 300) { r = x; g = 0; b = c; }
+    else { r = c; g = 0; b = x; }
+
+    return rgbToHex(
+      (r + m) * 255,
+      (g + m) * 255,
+      (b + m) * 255
+    );
+  }
+
+  function relativeLuminance(r, g, b){
+    const srgb = [r, g, b].map(v => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+  }
+
+  function contrastRatio(rgb1, rgb2){
+    const l1 = relativeLuminance(rgb1.r, rgb1.g, rgb1.b);
+    const l2 = relativeLuminance(rgb2.r, rgb2.g, rgb2.b);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  function getBestTextColor(hex){
+    const white = contrastRatio(toRgb(hex), { r: 255, g: 255, b: 255 });
+    const black = contrastRatio(toRgb(hex), { r: 0, g: 0, b: 0 });
+    return white >= black ? '#ffffff' : '#000000';
+  }
+</script>
 </body>
 </html>
